@@ -38,6 +38,34 @@
     items.forEach(function (el) { el.classList.add('in'); });
   }
 
+  // Busywork calculator
+  var calc = document.getElementById('busywork-calc');
+  if (calc) {
+    var num = function (id) { return Math.max(0, parseFloat(document.getElementById(id).value) || 0); };
+    var update = function () {
+      var hours = num('c-people') * num('c-hours') * num('c-weeks');
+      var saved = hours * Math.min(num('c-share'), 100) / 100;
+      document.getElementById('c-out-hours').textContent = Math.round(hours).toLocaleString('en-US') + ' hrs';
+      document.getElementById('c-out-cost').textContent = '$' + Math.round(hours * num('c-rate')).toLocaleString('en-US');
+      document.getElementById('c-out-saved-hours').textContent = Math.round(saved).toLocaleString('en-US') + ' hrs';
+      document.getElementById('c-out-saved').textContent = '$' + Math.round(saved * num('c-rate')).toLocaleString('en-US');
+    };
+    calc.addEventListener('input', update);
+    update();
+  }
+
+  // Copy buttons
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var text = document.getElementById(btn.getAttribute('data-copy')).innerText;
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'Copied';
+      }, function () {
+        btn.textContent = 'Select the text to copy it';
+      });
+    });
+  });
+
   // Contact form (AJAX with graceful fallback to normal POST)
   var form = document.querySelector('.contact-form');
   if (!form) return;
