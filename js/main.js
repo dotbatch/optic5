@@ -15,6 +15,12 @@
     });
   }
 
+  // Solid header once the page has scrolled
+  var header = document.querySelector('.site-header');
+  function onScroll() { header.classList.toggle('scrolled', window.scrollY > 40); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
   // Year
   var y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
@@ -61,7 +67,7 @@
       .then(function (data) {
         if (data.ok) {
           form.reset();
-          status.textContent = "Thanks! We'll be in touch within one business day.";
+          status.textContent = "Thanks. We'll be in touch soon.";
           status.classList.add('ok');
         } else {
           throw new Error(data.error || 'send failed');
