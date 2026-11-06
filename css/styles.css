@@ -242,8 +242,6 @@ footer a:hover { color: var(--text); }
   .card.feature { grid-column: 1 / -1; grid-template-columns: 1fr; gap: 1rem; }
   .steps { grid-template-columns: 1fr 1fr; }
   .foot-grid { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 760px) {
   .menu-toggle { display: block; }
   .nav-links {
     position: absolute; top: 70px; left: 0; right: 0; flex-direction: column; align-items: flex-start;
@@ -253,6 +251,8 @@ footer a:hover { color: var(--text); }
   .nav-links li { width: 100%; }
   .nav-links a { display: block; padding: .75rem 0; }
   .nav-links .btn { display: inline-flex; margin-top: .5rem; }
+}
+@media (max-width: 760px) {
   section { padding: 4.5rem 0; }
   .hero { padding: 4rem 0 3.5rem; }
   .services-grid, .packages, .wf-grid, .steps { grid-template-columns: 1fr; }
