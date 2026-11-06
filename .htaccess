@@ -1,3 +1,6 @@
+# Don't list the files in folders that have no index page
+Options -Indexes
+
 # Send everything to https://www.optic5.com
 # (skips .well-known so cPanel AutoSSL can still renew the certificate)
 RewriteEngine On
