@@ -1,0 +1,53 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never let two uploads run over each other.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Deploys stay off until the FTP secrets are added to the repo.
+      - name: Check FTP secrets
+        id: check
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          if [ -n "$FTP_SERVER" ] && [ -n "$FTP_USERNAME" ] && [ -n "$FTP_PASSWORD" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Skipping deploy: FTP_SERVER, FTP_USERNAME and FTP_PASSWORD secrets are not all set."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check out site
+        if: steps.check.outputs.ready == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Upload over FTPS
+        if: steps.check.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b # v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          # Path from the FTP account's login folder, ending in a slash.
+          # Set the FTP_SERVER_DIR repo variable to "./" if the account opens inside public_html.
+          server-dir: ${{ vars.FTP_SERVER_DIR || 'public_html/' }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            README.md
